@@ -1,0 +1,16 @@
+app:
+  env:  "development"
+  consumerbroker: "first.example.com:9092"
+  producerbroker: "second.example.com:9092"
+  #linetoken: "sdjfnasklJBS8asdnas83rq2mSJKnadfdmGFVJGSHBd3845ulzdmnfvsd"
+  
+nsp:
+  # nspOsIP:  "172.23.160.37"    # API gateway
+  # nspIprcIP: "172.23.160.30"   # API gateway
+  nspOsIP:    "192.168.0.11"    # API gateway
+  nspIprcIP:  "192.168.0.11"   # API gateway
+  username:   "admin"
+  password:   "NokiaNsp1!"
+  proxy:   
+    enable: "true"
+    proxyAddress: "http://138.203.39.123:80" # API proxy Gateway
