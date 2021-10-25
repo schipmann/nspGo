@@ -3,12 +3,10 @@ package main
 import (
 	"fmt"
 
-	"local.com/nspgo/mascot"
 	nspgosession "local.com/nspgo/nspGo-session"
 )
 
 func main() {
-	fmt.Println(mascot.BestMascot())
 	p := nspgosession.Session{}
 	p.LoadConfig()
 
