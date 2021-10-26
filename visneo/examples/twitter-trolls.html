@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>DataViz</title>
+        <style type="text/css">
+            #viz {
+                width: 900px;
+                height: 700px;
+            }
+        </style>
+        <script src="../dist/neovis.js"></script>
+    </head>   
+    <script>
+        function draw() {
+            var config = {
+                container_id: "viz",
+                server_url: "bolt://localhost",
+                server_user: "neo4j",
+                server_password: "test",
+                labels: {
+                    "ServiceRouter": {
+                        caption: "name",
+                        size: "pagerank",
+                        community: "community"
+                    }
+                },
+                relationships: {
+                    "link": {
+                         caption: true,
+                         //thickness: "count",
+                         community: "community"
+                    }
+                },
+                // initial_cypher: "MATCH p=(:ServiceRouter) RETURN p"
+                 initial_cypher: "MATCH p=(:ServiceRouter)-[r]-() RETURN p"
+                // initial_cypher: "MATCH p=(:ServiceRouter)-[:IP]->(:ServiceRouter) RETURN p"
+               //  initial_cypher: "MATCH p=(:ServiceRouter)-[:IP]-(:ServiceRouter) RETURN p"
+                // initial_cypher: "MATCH p=(:ServiceRouter)<-[:IP]-(:ServiceRouter) RETURN p"
+                // initial_cypher: "MATCH (p:ServiceRouter) WHERE p.name = 'Router01' RETURN p"
+              //   initial_cypher: "MATCH (p:ServiceRouter)-[r:BGPLU]-(:ServiceRouter) RETURN p, r"
+
+
+
+            }
+
+            var viz = new NeoVis.default(config);
+            viz.render();
+        }
+    </script>
+    <body onload="draw()">
+        <div id="viz"></div>
+    </body>
+</html>
