@@ -1,0 +1,5 @@
+- Beautify code
+- Make sure that Github will serve SVG files for gh-pages
+- Finish tutorial by writing about how to animate viewport and add a 'next frame' button
+- (Possibly?) Display information on edges
+  - Would require hard-coding edges instead of dynamically generating them.
