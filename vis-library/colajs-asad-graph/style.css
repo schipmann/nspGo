@@ -13,18 +13,19 @@ body {
 
 #cy {
   position: absolute;
-  left: 0;
+  left: 20;
+  right: 0;
   top: 0;
   bottom: 0;
-  right: 17em;
+  left: 20em;
 }
 
 .config {
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
-  width: 18em;
+  width: 20em;
   background: #FAFAFA;
   box-sizing: border-box;
   padding: 1em;
@@ -57,7 +58,10 @@ p {
 
 a,
 a:hover {
-  color: #fff;
+  color: rgb(18, 65, 145);
+}
+a:visited {
+  color: rgb(18, 65, 145);
 }
 
 .label {
@@ -65,10 +69,33 @@ a:hover {
 }
 
 .slider {
-  display: inline-flex;
+  -webkit-appearance: none;
   width: 100%;
-  margin: 1;
-  background: black;
+  height: 8px;
+  border-radius: 5px;  
+  background: #d3d3d3;
+  outline: none;
+  opacity: 1;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; 
+  background: #124191;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #04AA6D;
+  cursor: pointer;
 }
 
 .config-toggle {
