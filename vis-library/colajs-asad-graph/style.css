@@ -13,16 +13,16 @@ body {
 
 #cy {
   position: absolute;
-  left: 20;
-  right: 0;
+  left: 0;
+  right: 20;
   top: 0;
   bottom: 0;
-  left: 20em;
+  right: 20em;
 }
 
 .config {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
   bottom: 0;
   width: 20em;
@@ -94,16 +94,17 @@ a:visited {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: #04AA6D;
+  background: #124191;
   cursor: pointer;
 }
 
 .config-toggle {
   position: absolute;
-  right: 0;
+  right: 0.1em;
   top: 0;
-  padding: 1em;
-  margin: 0.2em;
+  bottom: 0;
+  padding: 0.5em;
+  margin: 0.1em;
   cursor: pointer;
   color: #494949;
   z-index: 9999999;

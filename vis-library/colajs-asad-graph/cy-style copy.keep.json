@@ -11,12 +11,12 @@
     "width": "5",
     "height": "5",
     "content": "data(name)",
-    "font-size": "4px",
+    "font-size": "8px",
     "text-valign": "bottom",
     "text-halign": "center",
     "background-color": "#8F96AC",
     "text-outline-color": "#F2F2F2",
-    "text-outline-width": "0.3px",
+    "text-outline-width": "1px",
     "color": "#353535",
     "overlay-padding": "10px",
     "z-index": "10"
@@ -51,11 +51,11 @@
   "selector": "edge",
   "style": {
     "targetArrowShape": "triangle",
-    "arrow-scale": "0.5",
-    "curve-style": "straight",
+    "arrow-scale": "0.1",
+    "curve-style": "bezier",
     "opacity": "0.4",
     "line-color": "#61A80A",
-    "width": "5",
+    "width": "0.1",
     "overlay-padding": "3px"
   }
 }, {
