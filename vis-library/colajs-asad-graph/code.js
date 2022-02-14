@@ -5,7 +5,7 @@ Promise.all([
     .then(function(res) {
       return res.json();
     }),
-  fetch('data.json')
+  fetch('data-cytoMarshall.json')
     .then(function(res) {
       return res.json();
     })
@@ -80,8 +80,8 @@ Promise.all([
       },
 
       {
-        label: 'Node spacing-asad',
-        param: 'nodeSpacingAsad',
+        label: 'Placeholder',
+        param: 'Placeholder',
         min: 1,
         max: 500
       }
@@ -166,7 +166,7 @@ Promise.all([
     }
 
     function makeButton( opts ){
-      var $button = h('button', { 'class': 'btn btn-default' }, [ opts.label ]);
+      var $button = h('button', { 'class': 'btn btn-default' , 'title': "Auto Layout"}, [ opts.label ]);
 
       $btnParam.appendChild( $button );
 
@@ -189,7 +189,7 @@ Promise.all([
     var bgpLuLinkVisibiliy = true
 
     function makeButtonBgpLuLink( opts ){
-      var $buttonsBgpLuLink = h('button', { 'class': 'btn btn-default' }, [ opts.label ]);
+      var $buttonsBgpLuLink = h('button', { 'class': 'btn btn-default' , 'title': "Toggle show BGP-LU Link-Tunnel" }, [ opts.label ]);
       $btnParam.appendChild( $buttonsBgpLuLink );
       $buttonsBgpLuLink.addEventListener('click', function(){
         layout.stop();
