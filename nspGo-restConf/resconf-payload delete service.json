@@ -1,0 +1,15 @@
+{
+    "ietf-yang-patch:yang-patch": {
+      "patch-id": "as",
+      "edit": [
+        {
+          "edit-id": "1",
+          "operation": "delete",
+          "target":"/service/epipe=001",
+          "value":{"nokia-conf:epipe": {"service-name": "001", "service-id": "001", "customer": "1"}}
+        }
+      ]
+    }
+  }
+  
+

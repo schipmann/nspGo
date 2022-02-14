@@ -30,13 +30,15 @@ func main() {
 
 	//// get network ietf
 	// will throw the response to IpOptim.ResponseData and func returen
-	ip.GetNetworkIetf(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress)
+	// ip.GetNetworkIetf(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress)
 
-	// print the Response Data
-	fmt.Println(ip.ResponseData)
+	// // print the Response Data
+	// fmt.Println(ip.ResponseData)
 
 	// print the function return
-	fmt.Println(ip.GetNetworkIetf(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress))
+	// fmt.Println(ip.GetNetworkIetf(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress))
+
+	fmt.Println(ip.GetL3Networks(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress))
 
 	p.RevokeRestToken()
 

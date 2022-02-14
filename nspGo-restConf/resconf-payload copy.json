@@ -1,0 +1,19 @@
+{
+    "ietf-yang-patch:yang-patch": {
+      "patch-id": "as",
+      "edit": [
+        {
+          "edit-id": "as",
+          "operation": "create",
+          "target": "/interface=test-yang-patch-28",
+          "value": {
+            "nokia-conf:interface": [
+              {
+                "interface-name": "test-yang-patch-28"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
