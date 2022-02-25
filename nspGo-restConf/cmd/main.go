@@ -10,7 +10,6 @@ import (
 
 	nspgorestconf "local.com/nspgo/nspGo-restConf"
 	nspgosession "local.com/nspgo/nspGo-session"
-
 )
 
 func main() {
@@ -29,9 +28,6 @@ func main() {
 
 	p.GetRestToken()
 	log.Info("nsp.linetoken_NEW :", p.Token)
-
-
-
 
 	// init class RestConf
 	rc := nspgorestconf.RestConf{}
@@ -74,7 +70,6 @@ func main() {
 	rc.ReadRestConfPayload(pathToPayload)
 	restconfPayloadCreate := rc.Payload
 
-
 	// Running Restconf Request In Sequence
 	// Running Restconf Request In Sequence
 	// startSequence := time.Now()
@@ -89,9 +84,6 @@ func main() {
 
 	// log.Info("Finished Sequence Request")
 	// log.Info("Elapsed Time: ", time.Since(startSequence))
-
-
-
 
 	// Running Restconf Request In Concurrent
 	// Running Restconf Request In Concurrent
@@ -113,7 +105,7 @@ func main() {
 		}(j)
 	}
 	waitingGroupNeList.Wait()
-	
+
 	log.Info("Number of Targeted NE: ", len(listOfNeId))
 	log.Info("Finished Concurrent Request")
 	log.Info("RestConf Async: ", restconfAsync)
