@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -11,6 +10,7 @@ import (
 
 	nspgorestconf "local.com/nspgo/nspGo-restConf"
 	nspgosession "local.com/nspgo/nspGo-session"
+
 )
 
 func main() {
@@ -18,24 +18,23 @@ func main() {
 	p := nspgosession.Session{}
 	p.LoadConfig()
 
-	fmt.Println("nsp.nspOsIP :", p.IpAdressNspOs)
-	fmt.Println("nsp.nspIprcIP :", p.IpAdressIprc)
-	fmt.Println("nsp.Username :", p.Username)
-	fmt.Println("nsp.Password :", p.Password)
-	fmt.Println("nsp.linetoken :", p.Token)
+	log.Info("nsp.nspOsIP :", p.IpAdressNspOs)
+	log.Info("nsp.nspIprcIP :", p.IpAdressIprc)
+	log.Info("nsp.Username :", p.Username)
+	log.Info("nsp.Password :", p.Password)
+	log.Info("nsp.linetoken :", p.Token)
 
 	p.EncodeUserName()
-	fmt.Println(p.EncodeUserName())
+	log.Info(p.EncodeUserName())
 
 	p.GetRestToken()
-	fmt.Println("nsp.linetoken_NEW :", p.Token)
+	log.Info("nsp.linetoken_NEW :", p.Token)
+
+
+
 
 	// init class RestConf
 	rc := nspgorestconf.RestConf{}
-
-	//measure the start time
-	start := time.Now()
-	log.Info("Start Time: ", start)
 
 	//get list NE
 	rc.ReadRestConfPayload("./nspGo-restConf/resconf-inventory-payload.json")
@@ -50,10 +49,22 @@ func main() {
 		listOfNeId = append(listOfNeId, value.String())
 		return true // keep iterating
 	})
-	// log.Info("listOfNeId: ", listOfNeId)
 
-	// get payload
-	pathToPayload := "./nspGo-restConf/resconf-payload.json"
+	if len(listOfNeId) != 0 {
+		log.Info("Number of Targeted NE: ", len(listOfNeId))
+	} else {
+		log.Error("Restconf Gateway is unavailable")
+	}
+
+	// get RestConf payload
+	// pathToPayload := "./nspGo-restConf/resconf-payload.json"
+	// pathToPayload := "./nspGo-restConf/resconf-payload-100-svc.json"
+	pathToPayload := "./nspGo-restConf/resconf-payload-500-svc.json"
+	// pathToPayload := "./nspGo-restConf/resconf-payload-700-svc.json"
+	// pathToPayload := "./nspGo-restConf/resconf-payload-1k-svc.json"
+	// pathToPayload := "./nspGo-restConf/resconf-payload-2k-svc.json"
+	// pathToPayload := "./nspGo-restConf/resconf-payload-4k-svc.json"
+
 	file, err := os.Stat(pathToPayload)
 	if err != nil {
 		return
@@ -63,30 +74,54 @@ func main() {
 	rc.ReadRestConfPayload(pathToPayload)
 	restconfPayloadCreate := rc.Payload
 
+
 	// Running Restconf Request In Sequence
-	log.Info("Running Sequence: ", len(listOfNeId))
-	value.ForEach(func(key, value gjson.Result) bool {
-		//println(value.String())
-		rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, value.String(), "/root", restconfPayloadCreate, false)
-		return true // keep iterating
-	})
+	// Running Restconf Request In Sequence
+	// startSequence := time.Now()
+	// log.Info("Start Time: ", startSequence)
+
+	// log.Info("Running Sequence Request: ", len(listOfNeId))
+	// value.ForEach(func(key, value gjson.Result) bool {
+	// 	//println(value.String())
+	// 	rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, value.String(), "/root", restconfPayloadCreate, false)
+	// 	return true // keep iterating
+	// })
+
+	// log.Info("Finished Sequence Request")
+	// log.Info("Elapsed Time: ", time.Since(startSequence))
+
+
+
 
 	// Running Restconf Request In Concurrent
-	log.Info("Running Concurrency: ", len(listOfNeId))
+	// Running Restconf Request In Concurrent
+	// Running Restconf Request In Concurrent
+	startConcurrenct := time.Now()
+	log.Info("Start Time Concurrent Request: ", startConcurrenct)
+
+	log.Info("Number of Concurrent Requests: ", len(listOfNeId))
 	var waitingGroupNeList sync.WaitGroup
 	waitingGroupNeList.Add(len(listOfNeId))
+
+	restconfAsync := false
 
 	for j := 0; j < len(listOfNeId); j++ {
 		go func(j int) {
 			// fmt.Println(listOfNeId[j])
-			rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, listOfNeId[j], "/root", restconfPayloadCreate, false)
+			rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, listOfNeId[j], "/root", restconfPayloadCreate, restconfAsync)
 			waitingGroupNeList.Done()
 		}(j)
 	}
 	waitingGroupNeList.Wait()
+	
+	log.Info("Number of Targeted NE: ", len(listOfNeId))
+	log.Info("Finished Concurrent Request")
+	log.Info("RestConf Async: ", restconfAsync)
 
-	log.Info("Finished")
-	log.Info("Elapsed Time: ", time.Since(start))
+	log.Info("Payload Size Per NE (Bytes): ", float64(file.Size()))
+	log.Info("Payload Size Per NE (KiloBytes): ", float64(file.Size())/1000)
+	log.Info("Payload Size Per NE (MegaBytes): ", float64(file.Size())/1000000)
+	log.Info("Elapsed Time: ", time.Since(startConcurrenct))
 
 	p.RevokeRestToken()
 }

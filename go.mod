@@ -21,6 +21,7 @@ require (
 	github.com/go-echarts/examples v0.0.0-20210531024954-f8ed052c600c
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/lanziliang/logrus-rollingfile-hook v0.0.0-20181010120248-c944a72bb4e4 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/noirbizarre/gonja v0.0.0-20200629003239-4d051fd0be61
@@ -37,4 +38,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
 	gopkg.in/ini.v1 v1.66.2 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

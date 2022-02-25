@@ -2,13 +2,18 @@ package nspgotools
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/noirbizarre/gonja"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type Tools struct {
 	JinjaTemplate      string
 	JinjaParameterFill string
+	LogFileName        string
 }
 
 func (tool *Tools) LoadTemplateJinja(template string, parameter string) {
@@ -25,4 +30,18 @@ func (tool *Tools) LoadTemplateJinja(template string, parameter string) {
 	}
 	fmt.Println(out)
 	// Output: Hello Florian!
+}
+
+func (tool *Tools) InitLogger(filePath string) {
+	mw := io.MultiWriter(os.Stdout, &lumberjack.Logger{
+		Filename:   "./logs/nspGo-restconf.log",
+		MaxSize:    500, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
+	})
+	log.SetOutput(mw)
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: false,
+		FullTimestamp: true})
 }
