@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	"os"
 	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
 
 	nspgorestconf "local.com/nspgo/nspGo-restConf"
 	nspgosession "local.com/nspgo/nspGo-session"
@@ -14,7 +15,6 @@ import (
 
 func main() {
 	// init class session
-	//
 	p := nspgosession.Session{}
 	p.LoadConfig()
 
@@ -30,89 +30,63 @@ func main() {
 	p.GetRestToken()
 	fmt.Println("nsp.linetoken_NEW :", p.Token)
 
-	//neId := "10.6.31.98"
-
 	// init class RestConf
 	rc := nspgorestconf.RestConf{}
-	//rc.PatchRestConfNetworkDevice(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, neId, xPath)
-
-	rc.ReadRestConfPayload("./nspGo-restConf/resconf-payload.json")
-	restconfPayload := rc.Payload
-	// fmt.Println("Print PayloadByte")
-	// fmt.Println(restconfPayload)
-
-	// fmt.Println("Print PayloadString")
-	// fmt.Println(string(restconfPayload))
-
-	//RestConf xPath
-	// xPath := "/root/nokia-conf:configure/router=Base"
-	//xPath := "/root/nokia-conf:configure"
-
-	// RestConf Payload // This payload is for MDC
-	// 10 mb satelite
-	// 155
-	// two size of payload.
-
-	// payload := (`{
-	// 	"ietf-yang-patch:yang-patch": {
-	// 	  "patch-id": "as",
-	// 	  "edit": [
-	// 		{
-	// 		  "edit-id": "as",
-	// 		  "operation": "create",
-	// 		  "target": "/interface=test-yang-patch-27",
-	// 		  "value": {
-	// 			"nokia-conf:interface": [
-	// 			  {
-	// 				"interface-name": "test-yang-patch-27"
-	// 			  }
-	// 			]
-	// 		  }
-	// 		}
-	// 	  ]
-	// 	}
-	//   }`)
 
 	//measure the start time
-
 	start := time.Now()
 	log.Info("Start Time: ", start)
 
-	// subnet 10.6.30.0 has 185 Nodes
-	var wg_30 sync.WaitGroup
-	wg_30.Add(185)
+	//get list NE
+	rc.ReadRestConfPayload("./nspGo-restConf/resconf-inventory-payload.json")
+	restconfPayloadInventory := rc.Payload
+	inventoryJson := rc.NspRestconfInventory(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, "operations/nsp-inventory:find", restconfPayloadInventory)
+	value := gjson.Get(inventoryJson, "nsp-inventory:output.data.#.ne-id")
+	// log.Info(value.String())
 
-	for i := 1; i <= 185; i++ {
-		go func(i int) {
-			//fmt.Println("10.6.30." + strconv.Itoa(i))
-			neId := "10.6.30." + strconv.Itoa(i)
+	listOfNeId := []string{}
+	value.ForEach(func(key, value gjson.Result) bool {
+		//println(value.String())
+		listOfNeId = append(listOfNeId, value.String())
+		return true // keep iterating
+	})
+	// log.Info("listOfNeId: ", listOfNeId)
 
-			rc.PatchRestConfNetworkDevice(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, neId, "/root", restconfPayload, true)
-
-			wg_30.Done()
-		}(i)
+	// get payload
+	pathToPayload := "./nspGo-restConf/resconf-payload.json"
+	file, err := os.Stat(pathToPayload)
+	if err != nil {
+		return
 	}
-	wg_30.Wait()
+	log.Info("Payload Size(bytes): ", file.Size())
 
-	// subnet 10.6.31.0 has 138 Nodes
-	// var wg_31 sync.WaitGroup
-	// wg_31.Add(138)
+	rc.ReadRestConfPayload(pathToPayload)
+	restconfPayloadCreate := rc.Payload
 
-	// for j := 1; j <= 138; j++ {
-	// 	go func(j int) {
-	// 		//fmt.Println("10.6.30." + strconv.Itoa(j))
-	// 		neId := "10.6.31." + strconv.Itoa(j)
+	// Running Restconf Request In Sequence
+	log.Info("Running Sequence: ", len(listOfNeId))
+	value.ForEach(func(key, value gjson.Result) bool {
+		//println(value.String())
+		rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, value.String(), "/root", restconfPayloadCreate, false)
+		return true // keep iterating
+	})
 
-	// 		rc.PatchRestConfNetworkDevice(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, neId, "/root", restconfPayload, true)
+	// Running Restconf Request In Concurrent
+	log.Info("Running Concurrency: ", len(listOfNeId))
+	var waitingGroupNeList sync.WaitGroup
+	waitingGroupNeList.Add(len(listOfNeId))
 
-	// 		wg_31.Done()
-	// 	}(j)
-	// }
-	// wg_31.Wait()
+	for j := 0; j < len(listOfNeId); j++ {
+		go func(j int) {
+			// fmt.Println(listOfNeId[j])
+			rc.PatchRestConfMdc(p.IpAdressIprc, p.Token, p.Proxy.Enable, p.Proxy.ProxyAddress, listOfNeId[j], "/root", restconfPayloadCreate, false)
+			waitingGroupNeList.Done()
+		}(j)
+	}
+	waitingGroupNeList.Wait()
 
-	// log.Info("Finished")
-	// log.Info("Elapsed Time: ", time.Since(start))
+	log.Info("Finished")
+	log.Info("Elapsed Time: ", time.Since(start))
 
 	p.RevokeRestToken()
-
 }

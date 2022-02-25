@@ -9,55 +9,133 @@ func main() {
 	//
 	t := nspgotools.Tools{}
 
-	// template := (`{
-	//       "ietf-yang-patch:yang-patch": {
-	//         "patch-id": "{{ name }}",
+	// 	template := (`{
+	//     "ietf-yang-patch:yang-patch": {
+	//         "patch-id": "as",
 	//         "edit": [
-	//           {
-	//             "edit-id": "as",
-	//             "operation": "create",
-	//             "target": "/interface=test-yang-patch-{{ name }}",
-	//             "value": {
-	//               "nokia-conf:interface": [
-	//                 {
-	//                   "interface-name": "test-yang-patch-27"
+	//             {
+	//                 "edit-id": "port-01",
+	//                 "operation": "merge",
+	//                 "target": "nokia-conf:configure/port",
+	//                 "value": {
+	//                     "nokia-conf:port": [
+	//                         {
+	//                         "port-id": "1/1/c1/1",
+	//                         "ethernet": {
+	//                             "mode": "hybrid"
+	//                         }
+	//                     },
+	//                     {
+	//                         "port-id": "1/1/c2/1",
+	//                         "ethernet": {
+	//                             "mode": "hybrid"
+	//                         }
+	//                     }
+	//                     ]
 	//                 }
-	//               ]
+	//             },
+	//             {
+	//                 "edit-id": "svc-01",
+	//                 "operation": "merge",
+	//                 "target": "nokia-conf:configure/service",
+	//                 "value": {
+	//                     "nokia-conf:service": {
+	//                         "epipe": [
+	//                           {% for n in range(1,4091) %}
+	//                             {
+	//                                 "service-name": "{{n}}",
+	//                                 "service-id": "{{n}}",
+	//                                 "customer": "1",
+	//                                 "sap": [
+	//                                     {
+	//                                         "sap-id": "1/1/c1/1:{{n}}"
+	//                                     },
+	//                                     {
+	//                                         "sap-id": "1/1/c2/1:{{n}}"
+	//                                     }
+	//                                 ]
+	//                             },
+	//                           {% endfor %}
+	//                         ]
+	//                     }
+	//                 }
 	//             }
-	//           }
 	//         ]
-	//       }
-	//     }`)
+	//     }
+	// }`)
 
-	template := (` {
-    "ietf-yang-patch:yang-patch": {
-      "patch-id": "as",
-      "edit": [
-        {% for n in range(1,4091) %}
-        {
-          "edit-id": "svc-{{n}}",
-          "operation": "merge",
-          "target":"nokia-conf:/configure/service/epipe=00{{n}}",
-          "value":{"nokia-conf:epipe": {"service-name": "00{{n}}", "service-id": "00{{n}}", "customer": "1"}}
-        },
-        {
-          "edit-id": "sap01-{{n}}",
-          "operation": "merge",
-          "target":"nokia-conf:/configure/service/epipe=00{{n}}/sap=1%2F1%2Fc1%2F1%3A{{n}}",
-          "value":{"nokia-conf:sap": {"sap-id": "1/1/c1/1:{{n}}"}}
-        },
-        {
-          "edit-id": "sap02-{{n}}",
-          "operation": "merge",
-          "target":"nokia-conf:/configure/service/epipe=00{{n}}/sap=1%2F1%2Fc2%2F1%3A{{n}}",
-          "value":{"nokia-conf:sap": {"sap-id": "1/1/c2/1:{{n}}"}}
-        },{% endfor %}
-      ]
-    }
-  }`)
+	template := (`
+	{
+		"ietf-yang-patch:yang-patch": {
+		  "patch-id": "as",
+		  "edit": [
+			{
+			  "edit-id": "svc-01",
+			  "operation": "merge",
+			  "target": "nokia-conf:configure",
+			  "value": {
+				"nokia-conf:configure": {
+				  "port": [
+					{
+					  "port-id": "1/1/c1/1",
+					  "ethernet": [
+						{
+						  "mode": "hybrid"
+						}
+					  ]
+					},
+					{
+					  "port-id": "1/1/c2/1",
+					  "ethernet": [
+						{
+						  "mode": "hybrid"
+						}
+					  ]
+					}
+				  ],
+				  "service": {
+					"sdp": [
+					  {
+						"sdp-id": "1",
+						"admin-state": "enable",
+						"delivery-type": "mpls",
+						"ldp": "true",
+						"far-end": {
+						  "ip-address": "99.99.99.1"
+						}
+					  }
+					],
+					"vpls":[
+					   {% for n in range(1,4090) %}
+					   {
+						"service-name": "service{{n}}",
+						"service-id": {{n}},
+						"description": "{{mplsParam02}}",
+						"customer": "1",
+						"spoke-sdp": [
+						  {
+							"sdp-bind-id": "1:{{n}}",
+							"description": "This Is MPLS-Params-01 PlaceHolder-{{n}}-{{mplsParam01}}"
+						  }
+						],
+						"sap": [
+						  {
+							"sap-id": "1/1/c2/1:{{n}}",
+							"description": "This Is MPLS-Params-02 PlaceHolder-{{n}}-{{pwLabels}}"
+						  }
+						]
+					  },
+					{% endfor %}
+					]
+				  }
+				}
+			  }
+			}
+		  ]
+		}
+	  }`)
 
 	parameter := (`{"name": "florian"}`)
 
 	t.LoadTemplateJinja(template, parameter)
-
 }
