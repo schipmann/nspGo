@@ -16,6 +16,8 @@ require (
 )
 
 require (
+	github.com/Juniper/go-netconf v0.1.1
+	github.com/antchfx/xmlquery v1.3.9
 	github.com/flosch/pongo2/v5 v5.0.0
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-echarts/examples v0.0.0-20210531024954-f8ed052c600c
@@ -26,6 +28,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/noirbizarre/gonja v0.0.0-20200629003239-4d051fd0be61
 	github.com/pelletier/go-toml v1.9.4 // indirect
+	github.com/scrapli/scrapligo v0.1.2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
@@ -34,6 +37,8 @@ require (
 	github.com/spf13/viper v1.10.1 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tidwall/gjson v1.14.0
+	github.com/ziutek/telnet v0.0.0-20180329124119-c3b780dc415b // indirect
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
