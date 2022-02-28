@@ -16,8 +16,9 @@ require (
 )
 
 require (
-	github.com/Juniper/go-netconf v0.1.1
+	github.com/Juniper/go-netconf v0.1.1 // indirect
 	github.com/antchfx/xmlquery v1.3.9
+	github.com/dave/jennifer v1.5.0
 	github.com/flosch/pongo2/v5 v5.0.0
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-echarts/examples v0.0.0-20210531024954-f8ed052c600c

@@ -121,7 +121,7 @@ func (rConf *RestConf) PatchRestConfMdc(urlHost string, token string, proxyEnabl
 		// log.Debug("PatchRestConfNetworkDevice debug ", resp)
 		// log.Info("Payload: " + string(payload))
 		// log.Info("URL: " + url)
-		log.Info("Received Respone "+neId+" Response: ", resp.String())
+		log.Info("Received Response "+neId+" Response: ", resp.String())
 		//fmt.Println(result)
 		if err != nil {
 			log.Error("PatchRestConfMdc is unsuccesful: ", err)

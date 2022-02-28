@@ -20,7 +20,7 @@ type Tools struct {
 	NetconfDriver      *netconf.Driver
 }
 
-func (tool *Tools) LoadTemplateJinja(template string, parameter string) {
+func (tool *Tools) LoadTemplateJinja(template string, variable string, variableInput string) {
 	tpl, err := gonja.FromString(template)
 
 	if err != nil {
@@ -28,7 +28,7 @@ func (tool *Tools) LoadTemplateJinja(template string, parameter string) {
 	}
 	// Now you can render the template with the given
 	// pongo2.Context how often you want to.
-	out, err := tpl.Execute(gonja.Context{"name": "florian"})
+	out, err := tpl.Execute(gonja.Context{variable: variableInput, "a": "a"})
 	if err != nil {
 		panic(err)
 	}
@@ -38,6 +38,8 @@ func (tool *Tools) LoadTemplateJinja(template string, parameter string) {
 
 func (tool *Tools) InitLogger(filePath string) {
 	mw := io.MultiWriter(os.Stdout, &lumberjack.Logger{
+		// mw := io.MultiWriter(&lumberjack.Logger{
+
 		Filename:   filePath,
 		MaxSize:    10, // megabytes
 		MaxBackups: 3,
