@@ -1,21 +1,40 @@
 package main
 
 import (
-	"io/ioutil"
-	"log"
-	"os"
+	"fmt"
+	"math/big"
+	"time"
 
+	nspgosession "local.com/nspgo/nspGo-session"
 	nsptopoviewer "local.com/nspgo/nspGo-topoViewer"
 )
 
 func main() {
-	graph1 := nsptopoviewer.CyGraph{}
+	session := nspgosession.Session{}
+	session.LoadConfig()
+	session.EncodeUserName()
+	session.GetRestToken()
 
-	content, err := ioutil.ReadFile("../../ietfNetwork.json")
-	if err != nil {
-		log.Fatal("Error when opening file: ", err)
-	}
-	filePath, _ := os.Getwd()
-	filePath = (filePath + "../../../vis-library/colajs-asad-graph/data-cytoMarshall.json")
-	graph1.DumpIetfNetworkToCyGraph(content, nsptopoviewer.IetfNetworkStruct{}, filePath)
+	req := nsptopoviewer.Requester{}
+
+	req.GetNetworkIetf(session.IpAdressIprc, session.Token, session.Proxy.Enable, session.Proxy.ProxyAddress)
+	ietf := req.ResponseData
+	req.GetL3Networks(session.IpAdressIprc, session.Token, session.Proxy.Enable, session.Proxy.ProxyAddress)
+	l3 := req.ResponseData
+	req.GetServiceLayer(session.IpAdressIprc, session.Token, session.Proxy.Enable, session.Proxy.ProxyAddress)
+	sl := req.ResponseData
+
+	// measure runtime of JSON to Struct - Struct to JSON
+
+	start := time.Now()
+	r := new(big.Int)
+	fmt.Println(r.Binomial(1000, 10))
+
+	process := nsptopoviewer.CyGraph{}
+	process.UnmarshalToCyGraph(ietf, l3, sl)
+	process.MarshalToCyto()
+
+	elapsed := time.Since(start)
+	fmt.Printf("Binomial took %s", elapsed)
+	//measure runtime of JSON to Struct - Struct to JSON >
 }
