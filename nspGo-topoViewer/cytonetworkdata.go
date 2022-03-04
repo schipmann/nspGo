@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strconv"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/buger/jsonparser"
 )
 
@@ -199,7 +201,8 @@ func (cyGraph *CyGraph) MarshalToCyto() {
 	if err != nil {
 		panic(err)
 	}
-	ioutil.WriteFile("../frontend/cytoStruct.json", file, 0644)
+	fileerror := ioutil.WriteFile("../cytostruct.json", file, 0644)
+	log.Error(fileerror)
 }
 
 func (cyNode *CyGraph) checkForDouble(a cyNode) bool {

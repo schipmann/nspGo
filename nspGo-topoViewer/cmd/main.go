@@ -11,11 +11,12 @@ import (
 
 func main() {
 	session := nspgosession.Session{}
+	req := nsptopoviewer.Requester{}
+	process := nsptopoviewer.CyGraph{}
+
 	session.LoadConfig()
 	session.EncodeUserName()
 	session.GetRestToken()
-
-	req := nsptopoviewer.Requester{}
 
 	req.GetNetworkIetf(session.IpAdressIprc, session.Token, session.Proxy.Enable, session.Proxy.ProxyAddress)
 	ietf := req.ResponseData
@@ -30,7 +31,6 @@ func main() {
 	r := new(big.Int)
 	fmt.Println(r.Binomial(1000, 10))
 
-	process := nsptopoviewer.CyGraph{}
 	process.UnmarshalToCyGraph(ietf, l3, sl)
 	process.MarshalToCyto()
 

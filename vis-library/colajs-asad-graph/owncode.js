@@ -1,11 +1,16 @@
 /* global Promise, fetch, window, cytoscape, document, tippy, _ */
 
+/* ::::::::::::::::::::::::::::
+First Research of Document :
+line 28-31 daten in den Nodes 
+
+:::::::::::::::::::::::::::::*/
 Promise.all([
   fetch('cy-style.json')
     .then(function(res) {
       return res.json();
     }),
-  fetch('data-cytoMarshall.json')
+  fetch('../cytostruct.json')
     .then(function(res) {
       return res.json();
     })
@@ -16,31 +21,42 @@ Promise.all([
 
       Object.keys(attrs).forEach(function(key){
         var val = attrs[key];
-        //console.log(val, +" ",key)
+        console.log(val)
+
         el.setAttribute(key, val);
       });
 
       children.forEach(function(child){
+        console.log(child)
         el.appendChild(child);
       });
-
       return el;
     };
 
     var t = function(text){
       var el = document.createTextNode(text);
-
       return el;
     };
 
     var $ = document.querySelector.bind(document);
 
-    var cy = window.cy = cytoscape({
+
+
+/*     var cy = window.cy = cytoscape({
       container: document.getElementById('cy'),
       style: dataArray[0],
       elements: dataArray[1],
       layout: { name: 'random' }
+    }); */
+
+    var cy = window.cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: dataArray[1].nodes,
+      layout: { name: 'random' }
     });
+    console.log(dataArray)
+    console.log(dataArray[1].nodes[0])
+
 
     var params = {
       name: 'cola',
@@ -114,7 +130,6 @@ Promise.all([
       }
     ];
 
-
     sliders.forEach( makeSlider );
 
     buttons.forEach( makeButton );
@@ -123,6 +138,7 @@ Promise.all([
 
 
     function makeLayout( opts ){
+      console.lo
       params.randomize = false;
       params.edgeLength = function(e){ return params.edgeLengthVal / e.data('weight'); };
 
@@ -182,10 +198,7 @@ Promise.all([
 
 
     bgpLuLink = cy.filter ('edge[group = "bgpLu"]');
-    var bgpLuLink = cy.edges();
-    console.log(bgpLuLink)
-
-    console.log('bgpLuLink'); 
+    //var bgpLuLink = cy.edges();
 
     var bgpLuLinkVisibiliy = true
 
@@ -208,6 +221,8 @@ Promise.all([
         
       });
     }
+
+    console.log(cy.nodes(), "")
 
     var makeTippy = function(node, html){
       return tippy( node.popperRef(), {
@@ -235,8 +250,6 @@ Promise.all([
     cy.on('tap', function(e){
       if(e.target === cy){
         hideAllTippies();
-        console.log("link")
-
       }
     });
 
@@ -248,10 +261,10 @@ Promise.all([
       hideAllTippies();
     });
 
-    cy.nodes().forEach(function(n){
-      var g = n.data('name');
+/*     cy.nodes().forEach(function(n){
+ */      /* var g = n.data('name'); */
 
-      var $links = [
+/*       var $links = [
         {
           name: 'System Address: ' + n.data('systemAddress'),
           url: 'http://www.genecards.org/cgi-bin/carddisp.pl?gene=' + g
@@ -261,14 +274,14 @@ Promise.all([
           url: 'http://www.uniprot.org/uniprot/?query='+ g +'&fil=organism%3A%22Homo+sapiens+%28Human%29+%5B9606%5D%22&sort=score'
         },
         {
-          name: 'Handsome.com',
-          url: 'https://www.linkedin.com/in/asadarafat/' + g
-        }
-      ].map(function( link ){
+          name: 'Network: ' + n.data('network'),
+          url: 'https://www.linkedin.com/in/asadarafat/' + g */
+      /*  }  */
+/*       ].map(function( link ){
         return h('a', { target: '_blank', href: link.url, 'class': 'tip-link' }, [ t(link.name) ]);
-      });
+      }); */
 
-      var tippy = makeTippy(n, h('div', {}, $links));
+/*       var tippy = makeTippy(n, h('div', {}, $links));
 
       n.data('tippy', tippy);
 
@@ -277,7 +290,8 @@ Promise.all([
 
         cy.nodes().not(n).forEach(hideTippy);
       });
-    });
+    }); */
+
 
     $('#config-toggle').addEventListener('click', function(){
       $('body').classList.toggle('config-closed');

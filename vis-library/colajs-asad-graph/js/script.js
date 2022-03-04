@@ -23,7 +23,7 @@ cy = cytoscape( options = {
         'text-outline-width': 3,
         'text-outline-color': '#999',
         'text-valign': 'center',
-        'color': '#fff',
+        'color': 'red',
         'width': 'mapData(weight, 30, 80, 20, 50)',
         'height': 'mapData(height, 0, 200, 10, 45)',
         'border-color': '#fff'
@@ -43,7 +43,7 @@ cy = cytoscape( options = {
     {
       selector: 'edge',
       style: {
-        'width': 2,
+        'width': 200,
         'curve-style': 'bezier',
         'target-arrow-shape': 'triangle'
       }
@@ -83,7 +83,6 @@ cy = cytoscape( options = {
 };
 
 loadCy();
-
 (function(){
   var $$ = function( sel ){
     var els = document.querySelectorAll(sel);
@@ -161,6 +160,7 @@ loadCy();
       }, delay);
     };
   }
+
 
   var $toclinks = $$('.section > .toclink');
   var $tocinput = $('#toc-input');
@@ -344,7 +344,7 @@ loadCy();
           var css = {
             'text-outline-color': '#4183C4',
             'background-color': '#4183C4',
-            'line-color': '#4183C4',
+            'line-color': 'red',
             'target-arrow-color': '#4183C4',
             'source-arrow-color': '#4183C4'
           };
