@@ -2,6 +2,7 @@ package nsptopoviewer
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"reflect"
 	"strconv"
@@ -140,21 +141,25 @@ func (cyGraph *CyGraph) UnmarshalToCyGraph(ietfNetwork, networkNames, serviceLay
 	jsonPath := &basket.Response.Data.Network //to increase readablity, pointer makes sure there is no dublication in the memory
 
 	for index, networks := range *jsonPath {
+		for nindex, node := range networks.Node {
+			nodeId := node.NodeID
+			sourceNodeName := node.TeNodeAugment.Te.TeNodeID.DottedQuad.String
+			m[nodeId] = sourceNodeName
+			cyGraph.AppendCytoNode(sourceNodeName, strconv.Itoa(index)+"-"+strconv.Itoa(nindex), sourceNodeName, sourceNodeName, "7750", networks.NetworkID, "classes string") //strconv.Itoa formats Int64 to String
+		}
 		for lindex, link := range networks.Link {
-			for nindex, node := range networks.Node {
-				nodeId := node.NodeID
-				sourceNodeName := node.TeNodeAugment.Te.TeNodeID.DottedQuad.String
-				m[nodeId] = sourceNodeName
-				cyGraph.AppendCytoNode(sourceNodeName, strconv.Itoa(index)+"-"+strconv.Itoa(nindex), sourceNodeName, sourceNodeName, "7750", networks.NetworkID, "classes string") //strconv.Itoa formats Int64 to String
-			}
 			source := link.Source.SourceNode
 			target := link.Destination.DestNode
-			if source != "" || target != "" {
+			if m[source] != "" && m[target] != "" {
+				log.Print(m[source], " TRENNER ", m[target])
 				cyGraph.AppendCytoLink(strconv.Itoa(index)+"-"+strconv.Itoa(lindex), m[source], m[target], "2", "ip", "link-"+m[source]+"-"+m[target])
 			}
 		}
 
 	}
+	fmt.Println("Anzahl der Elemente in GraphNodes: ", len(cyGraph.GraphNodes))
+	fmt.Println("Anzahl der Elemente in GraphLinks: ", len(cyGraph.GraphLinks))
+
 	cyGraph.addNetworkNames(networkNames)
 	cyGraph.addServiceLayer(serviceLayer)
 }
@@ -202,7 +207,9 @@ func (cyGraph *CyGraph) MarshalToCyto() {
 		panic(err)
 	}
 	fileerror := ioutil.WriteFile("../cytostruct.json", file, 0644)
-	log.Error(fileerror)
+	if fileerror != nil {
+		log.Error(fileerror)
+	}
 }
 
 func (cyNode *CyGraph) checkForDouble(a cyNode) bool {
