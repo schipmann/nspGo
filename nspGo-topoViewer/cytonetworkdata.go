@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"strconv"
 
@@ -206,7 +207,14 @@ func (cyGraph *CyGraph) MarshalToCyto() {
 	if err != nil {
 		panic(err)
 	}
-	fileerror := ioutil.WriteFile("../cytostruct.json", file, 0644)
+
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(path)
+
+	fileerror := ioutil.WriteFile("../../vis-library/cytostruct.json", file, 0644)
 	if fileerror != nil {
 		log.Error(fileerror)
 	}
