@@ -35,30 +35,6 @@ func (s *Session) LoadConfig() {
 		FullTimestamp: true,
 	})
 
-	/*viper.SetConfigName("nspConfig") // config file name without extension
-	viper.SetConfigType("yaml")
-	//viper.AddConfigPath(".")
-	//viper.AddConfigPath("./nspGo-session/cmd") // config file path
-	viper.AutomaticEnv() // read value ENV variable
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Println("fatal error config file: default \n", err)
-		//os.Exit(1)
-	}
-	// Set default value
-	viper.SetDefault("nsp.linetoken", "DefaultLineTokenValue")
-
-	// pass to struct data
-	//env := viper.GetString("nsp.env")
-	s.IpAdressNspOs = viper.GetString("nsp.nspOsIP")
-	s.IpAdressIprc = viper.GetString("nsp.nspIprcIP")
-	s.Username = viper.GetString("nsp.username")
-	s.Password = viper.GetString("nsp.Password")
-	s.Token = viper.GetString("nsp.linetoken")
-	s.Proxy.Enable = viper.GetString("nsp.proxy.enable")
-	s.Proxy.ProxyAddress = viper.GetString("nsp.proxy.proxyAddress")*/
-
 	s.IpAdressNspOs = "147.75.102.178"
 	s.IpAdressIprc = "147.75.102.178"
 	s.Username = "admin"
@@ -88,9 +64,6 @@ func (s *Session) GetRestToken() {
 		client.SetProxy(s.Proxy.ProxyAddress)
 	}
 
-	// POST JSON string
-	// No need to set content type, if you have client level setting
-	//
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("authorization", "Basic "+s.Base64Str).

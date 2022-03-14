@@ -2,9 +2,7 @@ package nsptopoviewer
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"os"
 	"reflect"
 	"strconv"
 
@@ -134,7 +132,7 @@ func (cyGraph *CyGraph) UnmarshalToCyGraph(ietfNetwork, networkNames, serviceLay
 
 	error2 := json.Unmarshal(ietfNetwork, &basket)
 	if error2 != nil {
-		panic(error2)
+		log.Error(error2)
 	}
 
 	m := make(map[string]string)
@@ -152,14 +150,13 @@ func (cyGraph *CyGraph) UnmarshalToCyGraph(ietfNetwork, networkNames, serviceLay
 			source := link.Source.SourceNode
 			target := link.Destination.DestNode
 			if m[source] != "" && m[target] != "" {
-				log.Print(m[source], " TRENNER ", m[target])
 				cyGraph.AppendCytoLink(strconv.Itoa(index)+"-"+strconv.Itoa(lindex), m[source], m[target], "2", "ip", "link-"+m[source]+"-"+m[target])
 			}
 		}
-
 	}
-	fmt.Println("Anzahl der Elemente in GraphNodes: ", len(cyGraph.GraphNodes))
-	fmt.Println("Anzahl der Elemente in GraphLinks: ", len(cyGraph.GraphLinks))
+
+	log.Info("Anzahl der Elemente in GraphNodes: ", len(cyGraph.GraphNodes))
+	log.Info("Anzahl der Elemente in GraphLinks: ", len(cyGraph.GraphLinks))
 
 	cyGraph.addNetworkNames(networkNames)
 	cyGraph.addServiceLayer(serviceLayer)
@@ -183,6 +180,11 @@ func (cyGraph *CyGraph) appendToNetwork(key, areaId, area, isisLevel, displayNam
 	cyGraph.Networks = append(cyGraph.Networks, network)
 }
 
+func returnHelper(yes []byte, param string) []byte {
+	result, _, _, _ := jsonparser.Get(yes, param)
+	return result
+}
+
 func (sL *CyGraph) addServiceLayer(serviceLayer []byte) {
 	var basket ServiceLayerStruct
 
@@ -196,23 +198,13 @@ func (sL *CyGraph) addServiceLayer(serviceLayer []byte) {
 	sL.ServiceLayer.SiteB = string(basket.NspServiceIntentIntent[0].IntentSpecificData.EvpnEpipeEvpnEpipe.SiteB.DeviceID)
 }
 
-func returnHelper(yes []byte, param string) []byte {
-	result, _, _, _ := jsonparser.Get(yes, param)
-	return result
-}
-
 //Marshals the Struct "CytoGraph" to a JSON-File that Cytoscape can handle it
 func (cyGraph *CyGraph) MarshalToCyto() {
+
 	file, err := json.MarshalIndent(cyGraph, "", "")
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
-
-	path, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println(path)
 
 	fileerror := ioutil.WriteFile("../../vis-library/cytostruct.json", file, 0644)
 	if fileerror != nil {
